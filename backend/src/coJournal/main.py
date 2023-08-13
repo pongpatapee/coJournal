@@ -2,8 +2,15 @@ import uvicorn
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from coJournal.routers import users
 
 app = FastAPI()
+
+app.include_router(users.router)
+
+origins = [
+    "http://localhost:3000"
+]
 
 app.add_middleware(
     CORSMiddleware,

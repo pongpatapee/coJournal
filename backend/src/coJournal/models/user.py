@@ -6,7 +6,7 @@ class UserBase(BaseModel):
     username: str
     displayName: str
     email: EmailStr
-    journals: List[Journal]
+    journals: List[Journal] = []
 
 class User(UserBase):
     uid: str
