@@ -1,4 +1,4 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Body
 from fastapi.responses import JSONResponse
 from fastapi.exceptions import HTTPException
 from coJournal.database import db, auth
@@ -12,7 +12,7 @@ router = APIRouter(
     tags=["users"]
 )
 
-userDao = UserDao()
+user_dao = UserDao()
 
 @router.post("/")
 async def create_user():
@@ -31,7 +31,7 @@ async def create_user():
 
     print(f"Successfully created auth user {auth_user.uid}")
 
-    user = userDao.create(User(
+    user = user_dao.create(User(
         uid=auth_user.uid,
         username=auth_user.email,
         displayName=auth_user.display_name,
@@ -45,11 +45,28 @@ async def create_user():
 
 @router.get("/{uid}")
 async def get_user(uid: str):
-    user = userDao.get(uid)
+    user = user_dao.get(uid)
 
     if not user:
         raise HTTPException(404, detail=f"User {uid} not found") 
 
     return user
 
+@router.get("/")
+async def get_all_users():
+    return user_dao.get_all()
+
+@router.put("/{uid}")
+async def update_user(uid: str, user: User = Body(...)):
+    updated_user = user_dao.update(uid, user)
+    if not updated_user:
+        raise HTTPException(404, detail=f"User {uid} not found")
+
+    return updated_user
+
+@router.delete("/{uid}")
+async def delete_user(uid: str):
+    user_dao.delete(uid)
+
+    return f"Deleted user {uid}"
 

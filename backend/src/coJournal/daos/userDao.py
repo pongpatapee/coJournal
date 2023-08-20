@@ -1,4 +1,4 @@
-from typing import Union
+from typing import Union, List
 from coJournal.database import db
 from coJournal.models.user import UserBase, User
 
@@ -13,10 +13,21 @@ class UserDao:
 
         return self.get(user.uid)
 
-    def update(self):
-        pass
+    def update(self, uid: str, user: User) -> Union[User, None]:
+        user_data = user.model_dump()
+        
+        doc_ref = db.collection(self.collection_name).document(uid)
 
-    def get(self, uid) -> Union[User, None]:
+        user_doc = doc_ref.get()
+        if (not user_doc.exists) or (user_data['uid'] != uid):
+            return None
+        
+        user_doc.update(user_data)
+
+        return self.get(uid)
+
+
+    def get(self, uid: str) -> Union[User, None]:
         doc_ref = db.collection(self.collection_name).document(uid)
         doc = doc_ref.get()
         
@@ -25,9 +36,20 @@ class UserDao:
         
         return 
 
-    def get_all(self):
-        pass
+    def get_all(self) -> List[User]:
+        user_collection = db.collection(self.collection_name)
+        user_list = []
+        
+        for user_doc in user_collection.stream():
+            user_dict = user_doc.to_dict()
+            user = User(**user_dict)
+            user_list.append(user)
+        
+        return user_list
 
-    def delete(self):
-        pass
+    def delete(self, uid):
+        db.collection(self.collection_name).document(str(uid)).delete()
+
+        return f"Deleted user {uid}"
+
 
