@@ -1,28 +1,50 @@
 from typing import Union, List
+from coJournal.daos.DaoInterface import DaoInterface
 from coJournal.database import db
 from coJournal.models.user import UserBase, User
+from coJournal.database import auth
+from datetime import datetime
 
-class UserDao:
+class UserDao(DaoInterface):
     collection_name = "users"
 
-    def create(self, user: User) -> Union[User, None]:
+    def create(self, user: UserBase) -> Union[User, None]:
         # User object created from google auth
         # create an entry in firestore
+
+        auth_user = auth.create_user(
+            email=user.email,
+            email_verified=False,
+            # phone_number=fake.phone_number(),
+            password='secretPassword',
+            display_name=user.display_name,
+            photo_url='http://www.example.com/12345678/photo.png',
+            disabled=False
+        )
+
+        print(f"Successfully created auth user {auth_user.uid}")
+
+        user = User(uid=auth_user.uid, **user.model_dump())
+
         doc_ref = db.collection(self.collection_name).document(user.uid)
         doc_ref.set(user.model_dump())
 
         return self.get(user.uid)
 
-    def update(self, uid: str, user: User) -> Union[User, None]:
+
+    def update(self, uid: str, user: UserBase) -> Union[User, None]:
         user_data = user.model_dump()
         
         doc_ref = db.collection(self.collection_name).document(uid)
 
         user_doc = doc_ref.get()
-        if (not user_doc.exists) or (user_data['uid'] != uid):
+        if (not user_doc.exists):
             return None
+
+        user_data['updated_at'] = datetime.utcnow()
+
         
-        user_doc.update(user_data)
+        doc_ref.update(user_data)
 
         return self.get(uid)
 
@@ -49,6 +71,7 @@ class UserDao:
 
     def delete(self, uid):
         db.collection(self.collection_name).document(str(uid)).delete()
+        auth.delete_user(uid)
 
         return f"Deleted user {uid}"
 

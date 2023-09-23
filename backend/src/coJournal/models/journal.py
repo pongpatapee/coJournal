@@ -1,13 +1,18 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from typing import List
 from datetime import datetime
 
 from coJournal.models.entry import Entry
 
-class Journal(BaseModel):
+class JournalBase(BaseModel):
     # google auth uids 
     personA_uid: str
     personB_uid: str
-    dateActivated: datetime
     entries: List[Entry]
-    viewingWindow: datetime
+    date_activated: datetime
+    viewing_window: datetime
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    updated_at: datetime = Field(default_factory=datetime.utcnow)
+
+class Journal(JournalBase):
+    id: str # firestore uid
