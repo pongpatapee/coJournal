@@ -1,7 +1,0 @@
-.env
-__pycache__/
-
-FIREBASE_SERVICE_KEY.json
-
-
-*.egg-info
