@@ -1,13 +1,14 @@
 package main
 
 import (
-	"coJournal/router"
+	"coJournal/internal/server"
 	"log"
 	"net/http"
+	// _ "github.com/lib/pq"
 )
 
 func main() {
-	r := router.NewRouter()
+	r := server.NewRouter()
 
 	log.Fatal(http.ListenAndServe(":8000", r))
 }
