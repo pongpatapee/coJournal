@@ -1,7 +1,8 @@
-package repository
+package in_memory
 
 import (
 	"coJournal/internal/entities"
+	"coJournal/internal/repository"
 	"errors"
 	"sync"
 
@@ -13,7 +14,7 @@ type InMemoryUserRepository struct {
 	sync.Mutex
 }
 
-func NewInMemoryUserRepository() UserRepository {
+func NewInMemoryUserRepository() repository.UserRepository {
 	return &InMemoryUserRepository{
 		db: make(map[uuid.UUID]*entities.User),
 	}
