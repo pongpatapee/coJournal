@@ -31,5 +31,6 @@ type Note struct {
 	Title       string    `json:"title"`
 	Body        string    `json:"body"`
 	Author      uuid.UUID `json:"author"`
+	JournalID   uuid.UUID `json:"journal_id"`
 	ID          uuid.UUID `json:"note_id"`
 }
