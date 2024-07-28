@@ -3,10 +3,10 @@ package handler
 import (
 	"coJournal/internal/entities"
 	"coJournal/internal/service"
-	"encoding/json"
 	"net/http"
 
 	"github.com/google/uuid"
+	"github.com/labstack/echo/v4"
 )
 
 type UserHTTPHandler struct {
@@ -19,96 +19,77 @@ func NewUserHTTPHandler(userService service.UserService) *UserHTTPHandler {
 	}
 }
 
-func (h *UserHTTPHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
+func (h *UserHTTPHandler) CreateUser(c echo.Context) error {
 	var user entities.User
-
-	err := json.NewDecoder(r.Body).Decode(&user)
-	if err != nil {
-		ErrorResponse(w, err.Error(), http.StatusInternalServerError)
-		return
+	if err := c.Bind(&user); err != nil {
+		return err
 	}
 
-	err = h.userService.Create(&user)
-	if err != nil {
-		ErrorResponse(w, "Failed to create user", http.StatusInternalServerError)
-		return
+	if err := h.userService.Create(&user); err != nil {
+		return err
 	}
 
-	w.WriteHeader(http.StatusCreated)
+	return c.JSON(http.StatusCreated, &user)
 }
 
-func (h *UserHTTPHandler) GetAllUser(w http.ResponseWriter, r *http.Request) {
+func (h *UserHTTPHandler) GetAllUser(c echo.Context) error {
 	users, err := h.userService.FindAll()
 	if err != nil {
-		ErrorResponse(w, err.Error(), http.StatusInternalServerError)
-		return
+		return err
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	err = json.NewEncoder(w).Encode(users)
-	if err != nil {
-		ErrorResponse(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
+	return c.JSON(http.StatusOK, users)
 }
 
-func (h *UserHTTPHandler) GetUser(w http.ResponseWriter, r *http.Request) {
-	id, err := uuid.Parse(r.PathValue("id"))
+func (h *UserHTTPHandler) GetUser(c echo.Context) error {
+	id, err := uuid.Parse(c.Param("id"))
 	if err != nil {
-		ErrorResponse(w, err.Error(), http.StatusBadRequest)
-		return
+		return err
 	}
 
 	user, err := h.userService.FindByID(id)
 	if err != nil {
-		ErrorResponse(w, "User not found", http.StatusNotFound)
-		return
+		return c.String(http.StatusNotFound, "Could not find user")
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	err = json.NewEncoder(w).Encode(user)
-	if err != nil {
-		ErrorResponse(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
+	return c.JSON(http.StatusOK, user)
 }
 
-func (h *UserHTTPHandler) UpdateUser(w http.ResponseWriter, r *http.Request) {
+func (h *UserHTTPHandler) UpdateUser(c echo.Context) error {
 	var user entities.User
-	err := json.NewDecoder(r.Body).Decode(&user)
-	if err != nil {
-		ErrorResponse(w, err.Error(), http.StatusInternalServerError)
-		return
+
+	if err := c.Bind(&user); err != nil {
+		return err
 	}
 
-	id, err := uuid.Parse(r.PathValue("id"))
+	id, err := uuid.Parse(c.Param("id"))
 	if err != nil {
-		ErrorResponse(w, err.Error(), http.StatusInternalServerError)
-		return
+		return err
 	}
 	user.ID = id
 
-	err = h.userService.Update(&user)
-	if err != nil {
-		ErrorResponse(w, "Failed to update user", http.StatusInternalServerError)
-		return
+	if err := h.userService.Update(&user); err != nil {
+		return c.String(http.StatusNotFound, "Could not find user to update")
 	}
 
-	w.WriteHeader(http.StatusOK)
+	updatedUser, err := h.userService.FindByID(id)
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(http.StatusOK, updatedUser)
 }
 
-func (h *UserHTTPHandler) DeleteUser(w http.ResponseWriter, r *http.Request) {
-	id, err := uuid.Parse(r.PathValue("id"))
+func (h *UserHTTPHandler) DeleteUser(c echo.Context) error {
+	id, err := uuid.Parse(c.Param("id"))
 	if err != nil {
-		ErrorResponse(w, err.Error(), http.StatusInternalServerError)
-		return
+		return err
 	}
 
 	err = h.userService.Delete(id)
 	if err != nil {
-		ErrorResponse(w, "Failed to delete user", http.StatusInternalServerError)
-		return
+		return err
 	}
 
-	w.WriteHeader(http.StatusOK)
+	return c.NoContent(http.StatusNoContent)
 }
