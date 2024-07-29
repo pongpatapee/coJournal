@@ -25,7 +25,7 @@ func (h *UserHTTPHandler) CreateUser(c echo.Context) error {
 		return err
 	}
 
-	if err := h.userService.Create(&user); err != nil {
+	if err := h.userService.Create(c.Request().Context(), &user); err != nil {
 		return err
 	}
 
@@ -33,7 +33,7 @@ func (h *UserHTTPHandler) CreateUser(c echo.Context) error {
 }
 
 func (h *UserHTTPHandler) GetAllUser(c echo.Context) error {
-	users, err := h.userService.FindAll()
+	users, err := h.userService.FindAll(c.Request().Context())
 	if err != nil {
 		return err
 	}
@@ -47,7 +47,7 @@ func (h *UserHTTPHandler) GetUser(c echo.Context) error {
 		return err
 	}
 
-	user, err := h.userService.FindByID(id)
+	user, err := h.userService.FindByID(c.Request().Context(), id)
 	if err != nil {
 		return c.String(http.StatusNotFound, "Could not find user")
 	}
@@ -68,11 +68,11 @@ func (h *UserHTTPHandler) UpdateUser(c echo.Context) error {
 	}
 	user.ID = id
 
-	if err := h.userService.Update(&user); err != nil {
+	if err := h.userService.Update(c.Request().Context(), &user); err != nil {
 		return c.String(http.StatusNotFound, "Could not find user to update")
 	}
 
-	updatedUser, err := h.userService.FindByID(id)
+	updatedUser, err := h.userService.FindByID(c.Request().Context(), id)
 	if err != nil {
 		return err
 	}
@@ -86,7 +86,7 @@ func (h *UserHTTPHandler) DeleteUser(c echo.Context) error {
 		return err
 	}
 
-	err = h.userService.Delete(id)
+	err = h.userService.Delete(c.Request().Context(), id)
 	if err != nil {
 		return err
 	}

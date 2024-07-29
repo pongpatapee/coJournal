@@ -3,6 +3,7 @@ package in_memory
 import (
 	"coJournal/internal/entities"
 	"coJournal/internal/repository"
+	"context"
 	"errors"
 	"sync"
 
@@ -20,7 +21,7 @@ func NewInMemoryNoteRepository() repository.NoteRepository {
 	}
 }
 
-func (repo *InMemoryNoteRepository) Create(note *entities.Note) error {
+func (repo *InMemoryNoteRepository) Create(_ context.Context, note *entities.Note) error {
 	repo.Lock()
 	defer repo.Unlock()
 
@@ -31,7 +32,7 @@ func (repo *InMemoryNoteRepository) Create(note *entities.Note) error {
 	return nil
 }
 
-func (repo *InMemoryNoteRepository) FindAll() ([]*entities.Note, error) {
+func (repo *InMemoryNoteRepository) FindAll(_ context.Context) ([]*entities.Note, error) {
 	repo.Lock()
 	defer repo.Unlock()
 
@@ -44,7 +45,7 @@ func (repo *InMemoryNoteRepository) FindAll() ([]*entities.Note, error) {
 	return notes, nil
 }
 
-func (repo *InMemoryNoteRepository) FindByID(id uuid.UUID) (*entities.Note, error) {
+func (repo *InMemoryNoteRepository) FindByID(_ context.Context, id uuid.UUID) (*entities.Note, error) {
 	repo.Lock()
 	defer repo.Unlock()
 
@@ -57,7 +58,7 @@ func (repo *InMemoryNoteRepository) FindByID(id uuid.UUID) (*entities.Note, erro
 	return note, nil
 }
 
-func (repo *InMemoryNoteRepository) Update(note *entities.Note) error {
+func (repo *InMemoryNoteRepository) Update(_ context.Context, note *entities.Note) error {
 	repo.Lock()
 	defer repo.Unlock()
 
@@ -73,7 +74,7 @@ func (repo *InMemoryNoteRepository) Update(note *entities.Note) error {
 	return nil
 }
 
-func (repo *InMemoryNoteRepository) Delete(id uuid.UUID) error {
+func (repo *InMemoryNoteRepository) Delete(_ context.Context, id uuid.UUID) error {
 	repo.Lock()
 	defer repo.Unlock()
 

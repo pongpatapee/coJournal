@@ -3,6 +3,7 @@ package in_memory
 import (
 	"coJournal/internal/entities"
 	"coJournal/internal/repository"
+	"context"
 	"errors"
 	"sync"
 
@@ -20,7 +21,7 @@ func NewInMemoryUserRepository() repository.UserRepository {
 	}
 }
 
-func (repo *InMemoryUserRepository) Create(user *entities.User) error {
+func (repo *InMemoryUserRepository) Create(_ context.Context, user *entities.User) error {
 	repo.Lock()
 	defer repo.Unlock()
 
@@ -31,7 +32,7 @@ func (repo *InMemoryUserRepository) Create(user *entities.User) error {
 	return nil
 }
 
-func (repo *InMemoryUserRepository) FindAll() ([]*entities.User, error) {
+func (repo *InMemoryUserRepository) FindAll(_ context.Context) ([]*entities.User, error) {
 	repo.Lock()
 	defer repo.Unlock()
 
@@ -44,7 +45,7 @@ func (repo *InMemoryUserRepository) FindAll() ([]*entities.User, error) {
 	return users, nil
 }
 
-func (repo *InMemoryUserRepository) FindByID(id uuid.UUID) (*entities.User, error) {
+func (repo *InMemoryUserRepository) FindByID(_ context.Context, id uuid.UUID) (*entities.User, error) {
 	repo.Lock()
 	defer repo.Unlock()
 
@@ -57,7 +58,7 @@ func (repo *InMemoryUserRepository) FindByID(id uuid.UUID) (*entities.User, erro
 	return user, nil
 }
 
-func (repo *InMemoryUserRepository) Update(user *entities.User) error {
+func (repo *InMemoryUserRepository) Update(_ context.Context, user *entities.User) error {
 	repo.Lock()
 	defer repo.Unlock()
 
@@ -73,7 +74,7 @@ func (repo *InMemoryUserRepository) Update(user *entities.User) error {
 	return nil
 }
 
-func (repo *InMemoryUserRepository) Delete(id uuid.UUID) error {
+func (repo *InMemoryUserRepository) Delete(_ context.Context, id uuid.UUID) error {
 	repo.Lock()
 	defer repo.Unlock()
 
