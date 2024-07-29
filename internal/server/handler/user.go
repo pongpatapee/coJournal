@@ -19,6 +19,7 @@ func NewUserHTTPHandler(userService service.UserService) *UserHTTPHandler {
 	}
 }
 
+// TODO: validate unqiue emails
 func (h *UserHTTPHandler) CreateUser(c echo.Context) error {
 	user := new(entities.User)
 	if err := c.Bind(user); err != nil {
