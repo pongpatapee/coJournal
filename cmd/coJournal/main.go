@@ -2,6 +2,7 @@ package main
 
 import (
 	"coJournal/internal/repository/postgres"
+	"coJournal/internal/server"
 	"coJournal/internal/server/handler"
 	"coJournal/internal/service"
 	"context"
@@ -53,27 +54,12 @@ func main() {
 		return c.String(http.StatusOK, "Welcome to CoJournal!")
 	})
 
-	// apiGroup := e.Group("/api")
-	// apiGroup.GET("", func(c echo.Context) error {
-	// 	return c.String(http.StatusOK, "what the fuck?")
-	// })
-	//
-	// userRepo := in_memory.NewInMemoryUserRepository()
+	apiRouter := e.Group("/api")
+
 	userRepo := postgres.NewPostgresUserRepository(dbpool)
 	userService := service.NewUserService(userRepo)
 	userHandler := handler.NewUserHTTPHandler(userService)
-	// userGroup := apiGroup.Group("/user")
-	// userGroup.POST("", userHandler.CreateUser)
-	// userGroup.GET("", userHandler.GetAllUser)
-	// userGroup.GET(":id", userHandler.GetUser)
-	// userGroup.PUT(":id", userHandler.UpdateUser)
-	// userGroup.DELETE(":id", userHandler.DeleteUser)
-
-	e.POST("/api/user", userHandler.CreateUser)
-	e.GET("/api/user", userHandler.GetAllUser)
-	e.GET("/api/user/:id", userHandler.GetUser)
-	e.PUT("/api/user/:id", userHandler.UpdateUser)
-	e.DELETE("/api/user/:id", userHandler.DeleteUser)
+	server.RegisterUserRoutes(apiRouter, userHandler)
 
 	e.Logger.Fatal(e.Start(":8000"))
 }
