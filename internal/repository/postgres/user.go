@@ -7,6 +7,7 @@ import (
 	"fmt"
 
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
@@ -24,9 +25,14 @@ func (repo *PostgresUserRepository) Create(ctx context.Context, user *entities.U
 	id := uuid.New()
 	user.ID = id
 
-	query := `INSERT INTO user_data (id, email, display_name) VALUES ($1, $2, $3)`
+	query := `INSERT INTO user_data (id, email, display_name) VALUES (@id, @email, @display_name)`
+	args := pgx.NamedArgs{
+		"id":           user.ID,
+		"email":        user.Email,
+		"display_name": user.DisplayName,
+	}
 
-	_, err := repo.db.Exec(ctx, query, user.ID, user.Email, user.DisplayName)
+	_, err := repo.db.Exec(ctx, query, args)
 	if err != nil {
 		return fmt.Errorf("unable to insert row %w", err)
 	}
@@ -84,10 +90,14 @@ func (repo *PostgresUserRepository) FindByID(ctx context.Context, id uuid.UUID) 
     FROM
         user_data
     WHERE
-        id = $1
+        id = @id
     `
+	args := pgx.NamedArgs{
+		"id": id,
+	}
+
 	var user entities.User
-	err := repo.db.QueryRow(ctx, query, id).Scan(
+	err := repo.db.QueryRow(ctx, query, args).Scan(
 		&user.ID,
 		&user.DisplayName,
 		&user.Email,
@@ -102,14 +112,19 @@ func (repo *PostgresUserRepository) FindByID(ctx context.Context, id uuid.UUID) 
 }
 
 func (repo *PostgresUserRepository) Update(ctx context.Context, user *entities.User) error {
-	query := `UPDATE user_data SET display_name=$1, email=$2, updated_at=NOW() WHERE id=$3`
-	_, err := repo.db.Exec(ctx, query, user.DisplayName, user.Email, user.ID)
+	query := `UPDATE user_data SET email=@email, display_name=@display_name, updated_at=NOW() WHERE id=@id`
+	args := pgx.NamedArgs{
+		"id":           user.ID,
+		"email":        user.Email,
+		"display_name": user.DisplayName,
+	}
+	_, err := repo.db.Exec(ctx, query, args)
 
 	return err
 }
 
 func (repo *PostgresUserRepository) Delete(ctx context.Context, id uuid.UUID) error {
-	query := `DELETE FROM user_data WHERE id=$1`
-	_, err := repo.db.Exec(ctx, query, id)
+	query := `DELETE FROM user_data WHERE id=@id`
+	_, err := repo.db.Exec(ctx, query, pgx.NamedArgs{"id": id})
 	return err
 }
