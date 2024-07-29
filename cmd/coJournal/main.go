@@ -1,11 +1,15 @@
 package main
 
 import (
-	"coJournal/internal/repository/in_memory"
+	"coJournal/internal/repository/postgres"
 	"coJournal/internal/server/handler"
 	"coJournal/internal/service"
+	"context"
+	"fmt"
 	"net/http"
+	"os"
 
+	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 )
@@ -13,6 +17,13 @@ import (
 func main() {
 	// r := server.SetupRouter()
 	// log.Fatal(http.ListenAndServe(":8000", r))
+
+	dbpool, err := pgxpool.New(context.Background(), os.Getenv("DATABASE_URL"))
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Unable to create connection pool: %v\n", err)
+		os.Exit(1)
+	}
+	defer dbpool.Close()
 
 	e := echo.New()
 	e.Use(middleware.Logger())
@@ -26,7 +37,8 @@ func main() {
 	// 	return c.String(http.StatusOK, "what the fuck?")
 	// })
 	//
-	userRepo := in_memory.NewInMemoryUserRepository()
+	// userRepo := in_memory.NewInMemoryUserRepository()
+	userRepo := postgres.NewPostgresUserRepository(dbpool)
 	userService := service.NewUserService(userRepo)
 	userHandler := handler.NewUserHTTPHandler(userService)
 	// userGroup := apiGroup.Group("/user")
