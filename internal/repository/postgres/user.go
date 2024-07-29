@@ -74,13 +74,42 @@ func (repo *PostgresUserRepository) FindAll(ctx context.Context) ([]*entities.Us
 }
 
 func (repo *PostgresUserRepository) FindByID(ctx context.Context, id uuid.UUID) (*entities.User, error) {
-	return nil, nil
+	query := `
+    SELECT 
+        id,
+        display_name,
+        email,
+        created_at,
+        updated_at
+    FROM
+        user_data
+    WHERE
+        id = $1
+    `
+	var user entities.User
+	err := repo.db.QueryRow(ctx, query, id).Scan(
+		&user.ID,
+		&user.DisplayName,
+		&user.Email,
+		&user.CreatedAt,
+		&user.UpdatedAt,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	return &user, nil
 }
 
 func (repo *PostgresUserRepository) Update(ctx context.Context, user *entities.User) error {
-	return nil
+	query := `UPDATE user_data SET display_name=$1, email=$2, updated_at=NOW() WHERE id=$3`
+	_, err := repo.db.Exec(ctx, query, user.DisplayName, user.Email, user.ID)
+
+	return err
 }
 
 func (repo *PostgresUserRepository) Delete(ctx context.Context, id uuid.UUID) error {
-	return nil
+	query := `DELETE FROM user_data WHERE id=$1`
+	_, err := repo.db.Exec(ctx, query, id)
+	return err
 }

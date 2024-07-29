@@ -20,16 +20,25 @@ func NewUserHTTPHandler(userService service.UserService) *UserHTTPHandler {
 }
 
 func (h *UserHTTPHandler) CreateUser(c echo.Context) error {
-	var user entities.User
-	if err := c.Bind(&user); err != nil {
+	user := new(entities.User)
+	if err := c.Bind(user); err != nil {
 		return err
 	}
 
-	if err := h.userService.Create(c.Request().Context(), &user); err != nil {
+	if err := c.Validate(user); err != nil {
 		return err
 	}
 
-	return c.JSON(http.StatusCreated, &user)
+	if err := h.userService.Create(c.Request().Context(), user); err != nil {
+		return err
+	}
+
+	createdUser, err := h.userService.FindByID(c.Request().Context(), user.ID)
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(http.StatusCreated, createdUser)
 }
 
 func (h *UserHTTPHandler) GetAllUser(c echo.Context) error {

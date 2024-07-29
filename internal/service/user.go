@@ -19,7 +19,6 @@ func NewUserService(userRepo repository.UserRepository) UserService {
 }
 
 func (s *userService) Create(ctx context.Context, user *entities.User) error {
-	user.ID = uuid.New()
 	return s.userRepo.Create(ctx, user)
 }
 
