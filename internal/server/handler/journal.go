@@ -3,8 +3,10 @@ package handler
 import (
 	"coJournal/internal/entities"
 	"coJournal/internal/service"
+	"fmt"
 	"net/http"
 
+	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 )
 
@@ -43,17 +45,62 @@ func (h *JournalHTTPHandler) CreateJournal(c echo.Context) error {
 }
 
 func (h *JournalHTTPHandler) GetAllJournal(c echo.Context) error {
-	return nil
+	journals, err := h.journalService.FindAll(c.Request().Context())
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(http.StatusOK, journals)
 }
 
 func (h *JournalHTTPHandler) GetJournal(c echo.Context) error {
-	return nil
+	id, err := uuid.Parse(c.Param("id"))
+	if err != nil {
+		return err
+	}
+
+	journal, err := h.journalService.FindByID(c.Request().Context(), id)
+	if err != nil {
+		return c.String(http.StatusNotFound, fmt.Sprintf("Could not find Journal: %v", id))
+	}
+
+	return c.JSON(http.StatusOK, journal)
 }
 
 func (h *JournalHTTPHandler) UpdateJournal(c echo.Context) error {
-	return nil
+	var journal entities.Journal
+	if err := c.Bind(&journal); err != nil {
+		return err
+	}
+
+	id, err := uuid.Parse(c.Param("id"))
+	if err != nil {
+		return err
+	}
+	journal.ID = id
+
+	if err := h.journalService.Update(c.Request().Context(), &journal); err != nil {
+		return err
+	}
+
+	updatedJournal, err := h.journalService.FindByID(c.Request().Context(), id)
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(http.StatusOK, updatedJournal)
 }
 
 func (h *JournalHTTPHandler) DeleteJournal(c echo.Context) error {
-	return nil
+	id, err := uuid.Parse(c.Param("id"))
+	if err != nil {
+		return err
+	}
+
+	err = h.journalService.Delete(c.Request().Context(), id)
+	if err != nil {
+		return err
+	}
+
+	return c.NoContent(http.StatusNoContent)
 }

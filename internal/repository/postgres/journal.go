@@ -22,6 +22,7 @@ func NewPostgresJournalRepository(db *pgxpool.Pool) repository.JournalRepository
 
 func (repo *PostgresJournalRepository) Create(ctx context.Context, journal *entities.Journal) error {
 	journal.ID = uuid.New()
+	// fmt.Printf("\n\n%v\n\n", journal)
 	query := `INSERT INTO journal (id, name, user_a, user_b) VALUES (@id, @name, @user_a, @user_b)`
 	args := pgx.NamedArgs{
 		"id":     journal.ID,
@@ -31,27 +32,103 @@ func (repo *PostgresJournalRepository) Create(ctx context.Context, journal *enti
 	}
 
 	_, err := repo.db.Exec(ctx, query, args)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return err
 }
 
 func (repo *PostgresJournalRepository) FindAll(ctx context.Context) ([]*entities.Journal, error) {
-	journals := make([]*entities.Journal, 0)
+	query := `
+    SELECT
+        id,
+        name,
+        user_a,
+        user_b,
+        created_at,
+        updated_at
+    FROM
+        journal
+    `
 
-	return []*entities.Journal{}, nil
+	rows, err := repo.db.Query(ctx, query)
+	if err != nil {
+		return nil, err
+	}
+
+	journals := make([]*entities.Journal, 0)
+	for rows.Next() {
+		var journal entities.Journal
+
+		rows.Scan(&journal)
+
+		journals = append(journals, &journal)
+	}
+
+	return journals, nil
 }
 
 func (repo *PostgresJournalRepository) FindByID(ctx context.Context, id uuid.UUID) (*entities.Journal, error) {
-	return nil, nil
+	query := `
+    SELECT
+        id,
+        name,
+        user_a,
+        user_b,
+        created_at,
+        updated_at
+    FROM
+        journal
+    WHERE
+        id=@id
+    `
+	var journal entities.Journal
+	err := repo.db.QueryRow(ctx, query, pgx.NamedArgs{"id": id}).
+		Scan(
+			&journal.ID,
+			&journal.Name,
+			&journal.UserA,
+			&journal.UserB,
+			&journal.CreatedAt,
+			&journal.UpdatedAt,
+		)
+	if err != nil {
+		return nil, err
+	}
+
+	return &journal, nil
 }
 
 func (repo *PostgresJournalRepository) Update(ctx context.Context, journal *entities.Journal) error {
-	return nil
+	query := `
+    UPDATE 
+        journal
+    SET
+        name=@name,
+        user_a=@user_a,
+        user_b=@user_b,
+        updated_at=NOW()
+    WHERE
+        id=@d
+    `
+
+	args := pgx.NamedArgs{
+		"id":     journal.ID,
+		"name":   journal.Name,
+		"user_a": journal.UserA,
+		"user_b": journal.UserB,
+	}
+
+	_, err := repo.db.Exec(ctx, query, args)
+
+	return err
 }
 
 func (repo *PostgresJournalRepository) Delete(ctx context.Context, id uuid.UUID) error {
-	return nil
+	query := `
+    DELETE FROM 
+        journal 
+    WHERE 
+        id=@id
+    `
+	_, err := repo.db.Exec(ctx, query, pgx.NamedArgs{"id": id})
+
+	return err
 }

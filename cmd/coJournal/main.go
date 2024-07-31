@@ -61,5 +61,10 @@ func main() {
 	userHandler := handler.NewUserHTTPHandler(userService)
 	server.RegisterUserRoutes(apiRouter, userHandler)
 
+	journalRepo := postgres.NewPostgresJournalRepository(dbpool)
+	journalService := service.NewJournalService(journalRepo)
+	journalHandler := handler.NewJournalHTTPHandler(journalService)
+	server.RegisterJournalRoutes(apiRouter, journalHandler)
+
 	e.Logger.Fatal(e.Start(":8000"))
 }

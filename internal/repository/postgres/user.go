@@ -112,7 +112,16 @@ func (repo *PostgresUserRepository) FindByID(ctx context.Context, id uuid.UUID) 
 }
 
 func (repo *PostgresUserRepository) Update(ctx context.Context, user *entities.User) error {
-	query := `UPDATE user_data SET email=@email, display_name=@display_name, updated_at=NOW() WHERE id=@id`
+	query := `
+    UPDATE 
+        user_data 
+    SET 
+        email=@email,
+        display_name=@display_name,
+        updated_at=NOW() 
+    WHERE 
+        id=@id
+    `
 	args := pgx.NamedArgs{
 		"id":           user.ID,
 		"email":        user.Email,
