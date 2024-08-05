@@ -62,7 +62,8 @@ func main() {
 	server.RegisterUserRoutes(apiRouter, userHandler)
 
 	journalRepo := postgres.NewPostgresJournalRepository(dbpool)
-	journalService := service.NewJournalService(journalRepo)
+	noteRepo := postgres.NewPostgresNoteRepository(dbpool)
+	journalService := service.NewJournalService(journalRepo, noteRepo)
 	journalHandler := handler.NewJournalHTTPHandler(journalService)
 	server.RegisterJournalRoutes(apiRouter, journalHandler)
 

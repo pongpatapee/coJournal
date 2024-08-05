@@ -22,7 +22,7 @@ func NewPostgresJournalRepository(db *pgxpool.Pool) repository.JournalRepository
 
 func (repo *PostgresJournalRepository) Create(ctx context.Context, journal *entities.Journal) error {
 	journal.ID = uuid.New()
-	// fmt.Printf("\n\n%v\n\n", journal)
+
 	query := `INSERT INTO journal (id, name, user_a, user_b) VALUES (@id, @name, @user_a, @user_b)`
 	args := pgx.NamedArgs{
 		"id":     journal.ID,
@@ -57,7 +57,14 @@ func (repo *PostgresJournalRepository) FindAll(ctx context.Context) ([]*entities
 	for rows.Next() {
 		var journal entities.Journal
 
-		rows.Scan(&journal)
+		rows.Scan(
+			&journal.ID,
+			&journal.Name,
+			&journal.UserA,
+			&journal.UserB,
+			&journal.CreatedAt,
+			&journal.UpdatedAt,
+		)
 
 		journals = append(journals, &journal)
 	}

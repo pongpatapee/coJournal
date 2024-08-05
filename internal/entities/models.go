@@ -15,13 +15,13 @@ type User struct {
 }
 
 type Journal struct {
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
-	Name      string    `json:"name" validate:"required"`
-	Notes     []Note    `json:"notes"`
-	UserA     uuid.UUID `json:"user_a" validate:"required"`
-	UserB     uuid.UUID `json:"user_b"`
-	ID        uuid.UUID `json:"journal_id"`
+	CreatedAt time.Time     `json:"created_at"`
+	UpdatedAt time.Time     `json:"updated_at"`
+	Name      string        `json:"name" validate:"required"`
+	Notes     []Note        `json:"notes"`
+	UserA     uuid.UUID     `json:"user_a" validate:"required"`
+	UserB     uuid.NullUUID `json:"user_b"`
+	ID        uuid.UUID     `json:"journal_id"`
 }
 
 type Note struct {

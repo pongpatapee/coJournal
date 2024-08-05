@@ -31,8 +31,8 @@ type NoteService interface {
 	Delete(ctx context.Context, id uuid.UUID) error
 }
 
-// type Service struct {
-// 	UserService    UserService
-// 	JournalService JournalService
-// 	NoteService    NoteService
-// }
+type Service struct {
+	UserService    UserService
+	JournalService JournalService
+	NoteService    NoteService
+}

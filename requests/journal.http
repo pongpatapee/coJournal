@@ -1,0 +1,60 @@
+###
+@hostname=localhost
+@port=8000
+@host={{hostname}}:{{port}}
+@id="eee17fa7-f7cf-4f1b-8910-d0cc9062b2c8"
+
+###
+POST http://{{host}}/api/journal
+content-type: application/json
+accept: application/json
+
+{
+  "name": "Test Journal",
+  "user_a": "eee17fa7-f7cf-4f1b-8910-d0cc9062b2c8"
+}
+
+###
+POST http://{{host}}/api/journal
+content-type: application/json
+accept: application/json
+
+{
+  "name": "Test Journal",
+  "user_a": "eee17fa7-f7cf-4f1b-8910-d0cc9062b2c8",
+  "user_b": "4cc88485-2b1e-4504-860e-e8dccc4584a0"
+}
+
+###
+POST http://{{host}}/api/journal
+content-type: application/json
+accept: application/json
+
+{
+  "name": "Test Journal",
+  "user_a": "eee17fa7-f7cf-4f1b-8910-d0cc9062b2c8",
+  "user_b": "eee17fa7-f7cf-4f1b-8910-d0cc9062b2c8"
+}
+
+###
+GET http://{{host}}/api/journal
+accept: application/json
+
+###
+GET http://{{host}}/api/journal/{{id}}
+accept: application/json
+
+###
+PUT http://{{host}}/api/journal/{{id}}
+content-type: application/json
+accept: application/json
+
+{
+  "email": "foo@bar.com",
+  "display_name": "foobar"
+}
+
+###
+DELETE http://{{host}}/api/journal/{{id}}
+
+###

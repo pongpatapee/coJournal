@@ -94,6 +94,51 @@ func (repo *PostgresNoteRepository) FindAll(ctx context.Context) ([]*entities.No
 	return notes, nil
 }
 
+func (repo *PostgresNoteRepository) FindByJournalID(ctx context.Context, journalID uuid.UUID) ([]*entities.Note, error) {
+	query := `
+    SELECT 
+        id,
+        journal_id,
+        author,
+        title,
+        body,
+        last_viewed,
+        updated_at,
+        created_at
+    FROM
+        note
+    WHERE    
+        journal_id = @journal_id
+    `
+	rows, err := repo.db.Query(ctx, query, pgx.NamedArgs{"journal_id": journalID})
+	if err != nil {
+		return nil, fmt.Errorf("failed to execute query: %w", err)
+	}
+
+	notes := make([]*entities.Note, 0)
+	for rows.Next() {
+		var note entities.Note
+
+		err := rows.Scan(
+			&note.ID,
+			&note.JournalID,
+			&note.Author,
+			&note.Title,
+			&note.Body,
+			&note.LastViewed,
+			&note.UpdatedAt,
+			&note.CreatedAt,
+		)
+		if err != nil {
+			return nil, fmt.Errorf("failed to scan row: %w", err)
+		}
+
+		notes = append(notes, &note)
+	}
+
+	return notes, nil
+}
+
 func (repo *PostgresNoteRepository) FindByID(ctx context.Context, id uuid.UUID) (*entities.Note, error) {
 	query := `
     SELECT 
