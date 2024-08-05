@@ -1,0 +1,39 @@
+###
+@hostname=localhost
+@port=8000
+@host={{hostname}}:{{port}}
+@id="eee17fa7-f7cf-4f1b-8910-d0cc9062b2c8"
+
+###
+POST http://{{host}}/api/user
+content-type: application/json
+accept: application/json
+
+{
+  "email": "wh1fty@email.com",
+  "display_name": "wh1fty"
+}
+
+
+###
+GET http://{{host}}/api/user
+accept: application/json
+
+###
+GET http://{{host}}/api/user/{{id}}
+accept: application/json
+
+###
+PUT http://{{host}}/api/user/{{id}}
+content-type: application/json
+accept: application/json
+
+{
+  "email": "foo@bar.com",
+  "display_name": "foobar"
+}
+
+###
+DELETE http://{{host}}/api/user/{{id}}
+
+###
