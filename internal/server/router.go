@@ -24,5 +24,11 @@ func RegisterJournalRoutes(apiRouter *echo.Group, journalHandler *handler.Journa
 	journalRouter.DELETE("/:id", journalHandler.DeleteJournal)
 }
 
-func RegisterNoteRoutes(apiRouter *echo.Group, NoteHandler *handler.NoteHTTPHandler) {
+func RegisterNoteRoutes(apiRouter *echo.Group, noteHandler *handler.NoteHTTPHandler) {
+	noteRouter := apiRouter.Group("/note")
+	noteRouter.POST("", noteHandler.CreateNote)
+	noteRouter.GET("", noteHandler.GetAllNote)
+	noteRouter.GET("/:id", noteHandler.GetNote)
+	noteRouter.PUT("/:id", noteHandler.UpdateNote)
+	noteRouter.DELETE("/:id", noteHandler.DeleteNote)
 }

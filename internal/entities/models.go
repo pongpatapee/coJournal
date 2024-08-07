@@ -25,12 +25,12 @@ type Journal struct {
 }
 
 type Note struct {
-	CreatedAt  time.Time `json:"created_at"`
-	UpdatedAt  time.Time `json:"updated_at"`
-	LastViewed time.Time `json:"last_viewed"`
-	Body       string    `json:"body"`
-	Title      string    `json:"title" validate:"required"`
-	Author     uuid.UUID `json:"author" validate:"required"`
-	JournalID  uuid.UUID `json:"journal_id" validate:"required"`
-	ID         uuid.UUID `json:"note_id"`
+	CreatedAt  time.Time  `json:"created_at"`
+	UpdatedAt  time.Time  `json:"updated_at"`
+	LastViewed *time.Time `json:"last_viewed"`
+	Body       string     `json:"body"`
+	Title      string     `json:"title" validate:"required"`
+	Author     uuid.UUID  `json:"author" validate:"required"`
+	JournalID  uuid.UUID  `json:"journal_id" validate:"required"`
+	ID         uuid.UUID  `json:"note_id"`
 }

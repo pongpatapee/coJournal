@@ -1,0 +1,44 @@
+###
+@hostname=localhost
+@port=8000
+@host={{hostname}}:{{port}}
+@note_id="dba3978b-6e34-4eeb-ab5a-05e6ae7f3758"
+
+###
+POST http://{{host}}/api/note
+content-type: application/json
+accept: application/json
+
+{
+  "journal_id": "8ade2d26-0ea6-4194-ae75-8e64ce23eff6",
+  "author": "eee17fa7-f7cf-4f1b-8910-d0cc9062b2c8",
+  "title": "New Note please have last viewed",
+  "body": "Contents in note",
+  "last_viewed": "2024-08-07T03:14:29.940302Z"
+}
+
+###
+GET http://{{host}}/api/note
+accept: application/json
+
+###
+GET http://{{host}}/api/note/{{note_id}}
+accept: application/json
+
+###
+PUT http://{{host}}/api/note/{{note_id}}
+content-type: application/json
+accept: application/json
+
+{
+  "journal_id": "8ade2d26-0ea6-4194-ae75-8e64ce23eff6",
+  "author": "eee17fa7-f7cf-4f1b-8910-d0cc9062b2c8",
+  "title": "",
+  "body": "",
+  "last_viewed": "2024-01-01T12:59:59.000000Z"
+}
+
+###
+DELETE http://{{host}}/api/note/{{note_id}}
+
+###

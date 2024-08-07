@@ -2,7 +2,7 @@
 @hostname=localhost
 @port=8000
 @host={{hostname}}:{{port}}
-@id="eee17fa7-f7cf-4f1b-8910-d0cc9062b2c8"
+@user_id="eee17fa7-f7cf-4f1b-8910-d0cc9062b2c8"
 
 ###
 POST http://{{host}}/api/user
@@ -20,11 +20,11 @@ GET http://{{host}}/api/user
 accept: application/json
 
 ###
-GET http://{{host}}/api/user/{{id}}
+GET http://{{host}}/api/user/{{user_id}}
 accept: application/json
 
 ###
-PUT http://{{host}}/api/user/{{id}}
+PUT http://{{host}}/api/user/{{user_id}}
 content-type: application/json
 accept: application/json
 
@@ -33,7 +33,7 @@ accept: application/json
   "display_name": "foobar"
 }
 
+DELETE http://{{host}}/api/user/{{user_id}}
 ###
-DELETE http://{{host}}/api/user/{{id}}
 
 ###

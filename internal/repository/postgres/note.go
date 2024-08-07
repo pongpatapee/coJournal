@@ -3,6 +3,7 @@ package postgres
 import (
 	"coJournal/internal/entities"
 	"coJournal/internal/repository"
+	"coJournal/internal/utils"
 	"context"
 	"fmt"
 
@@ -25,11 +26,15 @@ func (repo *PostgresNoteRepository) Create(ctx context.Context, note *entities.N
 	id := uuid.New()
 	note.ID = id
 
+	fmt.Println("Note from repo:")
+	fmt.Printf("%+v\n", note)
+	utils.PrintObject(note)
+
 	query := `
     INSERT INTO
         note (id, journal_id, author, title, body, last_viewed) 
     VALUES
-        (@id, @journal_id, @author, @title, @body, @last_viewed)
+        (@id, @journal_id, @author, @title, @body, @last_viewd)
     `
 
 	args := pgx.NamedArgs{
@@ -38,9 +43,13 @@ func (repo *PostgresNoteRepository) Create(ctx context.Context, note *entities.N
 		"author":      note.Author,
 		"title":       note.Title,
 		"body":        note.Body,
-		"last_viewed": nil,
+		"last_viewed": note.LastViewed,
 	}
 
+	fmt.Println("args")
+	fmt.Println(args)
+
+	// FIX: last_view is some how null in the db
 	_, err := repo.db.Exec(ctx, query, args)
 	if err != nil {
 		return fmt.Errorf("unable to insert row %w", err)
@@ -95,6 +104,7 @@ func (repo *PostgresNoteRepository) FindAll(ctx context.Context) ([]*entities.No
 }
 
 func (repo *PostgresNoteRepository) FindByJournalID(ctx context.Context, journalID uuid.UUID) ([]*entities.Note, error) {
+	// FIX: last_viewed time is stored as null in the DB, scanning fails since time.Time cannot be null
 	query := `
     SELECT 
         id,

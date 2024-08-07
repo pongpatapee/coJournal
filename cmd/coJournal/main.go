@@ -56,16 +56,20 @@ func main() {
 
 	apiRouter := e.Group("/api")
 
+	noteRepo := postgres.NewPostgresNoteRepository(dbpool)
+	noteService := service.NewNoteService(noteRepo)
+	noteHandler := handler.NewNoteHTTPHandler(noteService)
+	server.RegisterNoteRoutes(apiRouter, noteHandler)
+
+	journalRepo := postgres.NewPostgresJournalRepository(dbpool)
+	journalService := service.NewJournalService(journalRepo, noteRepo)
+	journalHandler := handler.NewJournalHTTPHandler(journalService)
+	server.RegisterJournalRoutes(apiRouter, journalHandler)
+
 	userRepo := postgres.NewPostgresUserRepository(dbpool)
 	userService := service.NewUserService(userRepo)
 	userHandler := handler.NewUserHTTPHandler(userService)
 	server.RegisterUserRoutes(apiRouter, userHandler)
-
-	journalRepo := postgres.NewPostgresJournalRepository(dbpool)
-	noteRepo := postgres.NewPostgresNoteRepository(dbpool)
-	journalService := service.NewJournalService(journalRepo, noteRepo)
-	journalHandler := handler.NewJournalHTTPHandler(journalService)
-	server.RegisterJournalRoutes(apiRouter, journalHandler)
 
 	e.Logger.Fatal(e.Start(":8000"))
 }

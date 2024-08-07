@@ -2,7 +2,7 @@
 @hostname=localhost
 @port=8000
 @host={{hostname}}:{{port}}
-@id="17e3cb59-eaa4-4a5f-8b2b-1e536772283d"
+@journal_id="17e3cb59-eaa4-4a5f-8b2b-1e536772283d"
 
 ###
 POST http://{{host}}/api/journal
@@ -41,11 +41,11 @@ GET http://{{host}}/api/journal
 accept: application/json
 
 ###
-GET http://{{host}}/api/journal/{{id}}
+GET http://{{host}}/api/journal/{{journal_id}}
 accept: application/json
 
 ###
-PUT http://{{host}}/api/journal/{{id}}
+PUT http://{{host}}/api/journal/{{journal_id}}
 content-type: application/json
 accept: application/json
 
@@ -56,6 +56,6 @@ accept: application/json
 }
 
 ###
-DELETE http://{{host}}/api/journal/{{id}}
+DELETE http://{{host}}/api/journal/{{journal_id}}
 
 ###
