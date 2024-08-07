@@ -2,7 +2,7 @@
 @hostname=localhost
 @port=8000
 @host={{hostname}}:{{port}}
-@id="eee17fa7-f7cf-4f1b-8910-d0cc9062b2c8"
+@id="17e3cb59-eaa4-4a5f-8b2b-1e536772283d"
 
 ###
 POST http://{{host}}/api/journal
@@ -50,8 +50,9 @@ content-type: application/json
 accept: application/json
 
 {
-  "email": "foo@bar.com",
-  "display_name": "foobar"
+  "name": "TEST",
+  "user_a": "eee17fa7-f7cf-4f1b-8910-d0cc9062b2c8",
+  "user_b": "4cc88485-2b1e-4504-860e-e8dccc4584a0"
 }
 
 ###

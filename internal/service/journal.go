@@ -25,7 +25,7 @@ func NewJournalService(
 }
 
 func (s *journalService) Create(ctx context.Context, journal *entities.Journal) error {
-	if journal.UserA == journal.UserB.UUID {
+	if journal.UserB.Valid && journal.UserA == journal.UserB.UUID {
 		return errors.New("users cannot be the same")
 	}
 
@@ -41,6 +41,10 @@ func (s *journalService) FindByID(ctx context.Context, id uuid.UUID) (*entities.
 }
 
 func (s *journalService) Update(ctx context.Context, journal *entities.Journal) error {
+	if journal.UserB.Valid && journal.UserA == journal.UserB.UUID {
+		return errors.New("users cannot be the same")
+	}
+
 	return s.journalRepo.Update(ctx, journal)
 }
 

@@ -113,7 +113,7 @@ func (repo *PostgresJournalRepository) Update(ctx context.Context, journal *enti
         user_b=@user_b,
         updated_at=NOW()
     WHERE
-        id=@d
+        id=@id
     `
 
 	args := pgx.NamedArgs{

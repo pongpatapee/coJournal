@@ -32,10 +32,12 @@ func (h *JournalHTTPHandler) CreateJournal(c echo.Context) error {
 	}
 
 	err := h.journalService.Create(c.Request().Context(), journal)
-	if err.Error() == "users cannot be the same" {
-		return echo.NewHTTPError(http.StatusBadRequest, "user_a and user_b cannot be the same")
-	}
 	if err != nil {
+
+		if err.Error() == "users cannot be the same" {
+			return echo.NewHTTPError(http.StatusBadRequest, "user_a and user_b cannot be the same")
+		}
+
 		return err
 	}
 
@@ -82,7 +84,11 @@ func (h *JournalHTTPHandler) UpdateJournal(c echo.Context) error {
 	}
 	journal.ID = id
 
-	if err := h.journalService.Update(c.Request().Context(), &journal); err != nil {
+	err = h.journalService.Update(c.Request().Context(), &journal)
+	if err != nil {
+		if err.Error() == "users cannot be the same" {
+			return echo.NewHTTPError(http.StatusBadRequest, "user_a and user_b cannot be the same")
+		}
 		return err
 	}
 
