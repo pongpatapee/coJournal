@@ -68,9 +68,40 @@ func (h *NoteHTTPHandler) GetNote(c echo.Context) error {
 }
 
 func (h *NoteHTTPHandler) UpdateNote(c echo.Context) error {
-	return nil
+	var note entities.Note
+
+	if err := c.Bind(&note); err != nil {
+		return err
+	}
+
+	id, err := uuid.Parse(c.Param("id"))
+	if err != nil {
+		return err
+	}
+	note.ID = id
+
+	if err := h.noteService.Update(c.Request().Context(), &note); err != nil {
+		return c.String(http.StatusNotFound, "Could not find note to update")
+	}
+
+	updatednote, err := h.noteService.FindByID(c.Request().Context(), id)
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(http.StatusOK, updatednote)
 }
 
 func (h *NoteHTTPHandler) DeleteNote(c echo.Context) error {
-	return nil
+	id, err := uuid.Parse(c.Param("id"))
+	if err != nil {
+		return err
+	}
+
+	err = h.noteService.Delete(c.Request().Context(), id)
+	if err != nil {
+		return err
+	}
+
+	return c.NoContent(http.StatusNoContent)
 }

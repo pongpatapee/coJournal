@@ -2,7 +2,7 @@
 @hostname=localhost
 @port=8000
 @host={{hostname}}:{{port}}
-@note_id="dba3978b-6e34-4eeb-ab5a-05e6ae7f3758"
+@note_id="e7bce272-8893-49aa-bb84-ba58e74366fd"
 
 ###
 POST http://{{host}}/api/note
@@ -12,9 +12,8 @@ accept: application/json
 {
   "journal_id": "8ade2d26-0ea6-4194-ae75-8e64ce23eff6",
   "author": "eee17fa7-f7cf-4f1b-8910-d0cc9062b2c8",
-  "title": "New Note please have last viewed",
-  "body": "Contents in note",
-  "last_viewed": "2024-08-07T03:14:29.940302Z"
+  "title": "New Note",
+  "body": "Contents in note"
 }
 
 ###
@@ -33,8 +32,8 @@ accept: application/json
 {
   "journal_id": "8ade2d26-0ea6-4194-ae75-8e64ce23eff6",
   "author": "eee17fa7-f7cf-4f1b-8910-d0cc9062b2c8",
-  "title": "",
-  "body": "",
+  "title": "New Updated Note",
+  "body": "Updated content",
   "last_viewed": "2024-01-01T12:59:59.000000Z"
 }
 

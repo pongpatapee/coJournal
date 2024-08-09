@@ -7,26 +7,26 @@ import (
 )
 
 type User struct {
-	CreatedAt   time.Time `json:"created_at"`
-	UpdatedAt   time.Time `json:"updated_at"`
-	DisplayName string    `json:"display_name" validate:"required"`
-	Email       string    `json:"email" validate:"required,email"`
-	ID          uuid.UUID `json:"user_id"`
+	CreatedAt   *time.Time `json:"created_at"`
+	UpdatedAt   *time.Time `json:"updated_at"`
+	DisplayName string     `json:"display_name" validate:"required"`
+	Email       string     `json:"email" validate:"required,email"`
+	ID          uuid.UUID  `json:"user_id"`
 }
 
 type Journal struct {
-	CreatedAt time.Time     `json:"created_at"`
-	UpdatedAt time.Time     `json:"updated_at"`
+	CreatedAt *time.Time    `json:"created_at"`
+	UpdatedAt *time.Time    `json:"updated_at"`
 	Name      string        `json:"name" validate:"required"`
-	Notes     []Note        `json:"notes"`
+	Notes     []Note        `json:"notes,omitempty"`
 	UserA     uuid.UUID     `json:"user_a" validate:"required"`
 	UserB     uuid.NullUUID `json:"user_b"`
 	ID        uuid.UUID     `json:"journal_id"`
 }
 
 type Note struct {
-	CreatedAt  time.Time  `json:"created_at"`
-	UpdatedAt  time.Time  `json:"updated_at"`
+	CreatedAt  *time.Time `json:"created_at"`
+	UpdatedAt  *time.Time `json:"updated_at"`
 	LastViewed *time.Time `json:"last_viewed"`
 	Body       string     `json:"body"`
 	Title      string     `json:"title" validate:"required"`
