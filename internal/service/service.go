@@ -18,6 +18,7 @@ type UserService interface {
 type JournalService interface {
 	Create(ctx context.Context, journal *entities.Journal) error
 	FindAll(ctx context.Context) ([]*entities.Journal, error)
+	FindByUserID(ctx context.Context, userID uuid.UUID) ([]*entities.Journal, error)
 	FindByID(ctx context.Context, id uuid.UUID) (*entities.Journal, error)
 	Update(ctx context.Context, journal *entities.Journal) error
 	Delete(ctx context.Context, id uuid.UUID) error

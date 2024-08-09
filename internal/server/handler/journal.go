@@ -50,9 +50,25 @@ func (h *JournalHTTPHandler) CreateJournal(c echo.Context) error {
 }
 
 func (h *JournalHTTPHandler) GetAllJournal(c echo.Context) error {
-	journals, err := h.journalService.FindAll(c.Request().Context())
-	if err != nil {
-		return err
+	var journals []*entities.Journal
+	var err error
+
+	if c.QueryParam("user_id") == "" {
+		journals, err = h.journalService.FindAll(c.Request().Context())
+		if err != nil {
+			return err
+		}
+
+	} else {
+		userID, err := uuid.Parse(c.QueryParam("user_id"))
+		if err != nil {
+			return err
+		}
+
+		journals, err = h.journalService.FindByUserID(c.Request().Context(), userID)
+		if err != nil {
+			return err
+		}
 	}
 
 	return c.JSON(http.StatusOK, journals)

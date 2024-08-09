@@ -72,6 +72,45 @@ func (repo *PostgresJournalRepository) FindAll(ctx context.Context) ([]*entities
 	return journals, nil
 }
 
+func (repo *PostgresJournalRepository) FindByUserID(ctx context.Context, userID uuid.UUID) ([]*entities.Journal, error) {
+	query := `
+    SELECT
+        id,
+        name,
+        user_a,
+        user_b,
+        created_at,
+        updated_at
+    FROM
+        journal
+    WHERE
+        user_a=@user_id or 
+        user_b=@user_id 
+    `
+	rows, err := repo.db.Query(ctx, query, pgx.NamedArgs{"user_id": userID})
+	if err != nil {
+		return nil, err
+	}
+
+	journals := make([]*entities.Journal, 0)
+	for rows.Next() {
+		var journal entities.Journal
+
+		rows.Scan(
+			&journal.ID,
+			&journal.Name,
+			&journal.UserA,
+			&journal.UserB,
+			&journal.CreatedAt,
+			&journal.UpdatedAt,
+		)
+
+		journals = append(journals, &journal)
+	}
+
+	return journals, nil
+}
+
 func (repo *PostgresJournalRepository) FindByID(ctx context.Context, id uuid.UUID) (*entities.Journal, error) {
 	query := `
     SELECT

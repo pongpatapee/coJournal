@@ -37,6 +37,10 @@ accept: application/json
 }
 
 ###
+GET http://{{host}}/api/journal?user_id=4cc88485-2b1e-4504-860e-e8dccc4584a0
+accept: application/json
+
+###
 GET http://{{host}}/api/journal
 accept: application/json
 
