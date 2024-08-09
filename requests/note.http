@@ -10,11 +10,15 @@ content-type: application/json
 accept: application/json
 
 {
-  "journal_id": "8ade2d26-0ea6-4194-ae75-8e64ce23eff6",
+  "journal_id": "64e69200-615a-403b-87b5-6d43c1610a51",
   "author": "eee17fa7-f7cf-4f1b-8910-d0cc9062b2c8",
   "title": "New Note",
   "body": "Contents in note"
 }
+
+###
+GET http://{{host}}/api/note?journal_id=64e69200-615a-403b-87b5-6d43c1610a51
+accept: application/json
 
 ###
 GET http://{{host}}/api/note

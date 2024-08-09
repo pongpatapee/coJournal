@@ -18,7 +18,7 @@ type Journal struct {
 	CreatedAt *time.Time    `json:"created_at"`
 	UpdatedAt *time.Time    `json:"updated_at"`
 	Name      string        `json:"name" validate:"required"`
-	Notes     []Note        `json:"notes,omitempty"`
+	Notes     []*Note       `json:"notes,omitempty"`
 	UserA     uuid.UUID     `json:"user_a" validate:"required"`
 	UserB     uuid.NullUUID `json:"user_b"`
 	ID        uuid.UUID     `json:"journal_id"`
@@ -28,7 +28,7 @@ type Note struct {
 	CreatedAt  *time.Time `json:"created_at"`
 	UpdatedAt  *time.Time `json:"updated_at"`
 	LastViewed *time.Time `json:"last_viewed"`
-	Body       string     `json:"body"`
+	Body       string     `json:"body,omitempty"`
 	Title      string     `json:"title" validate:"required"`
 	Author     uuid.UUID  `json:"author" validate:"required"`
 	JournalID  uuid.UUID  `json:"journal_id" validate:"required"`

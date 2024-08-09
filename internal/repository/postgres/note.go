@@ -3,7 +3,6 @@ package postgres
 import (
 	"coJournal/internal/entities"
 	"coJournal/internal/repository"
-	"coJournal/internal/utils"
 	"context"
 	"fmt"
 
@@ -25,10 +24,6 @@ func NewPostgresNoteRepository(db *pgxpool.Pool) repository.NoteRepository {
 func (repo *PostgresNoteRepository) Create(ctx context.Context, note *entities.Note) error {
 	id := uuid.New()
 	note.ID = id
-
-	fmt.Println("Note from repo:")
-	fmt.Printf("%+v\n", note)
-	utils.PrintObject(note)
 
 	query := `
     INSERT INTO
@@ -100,13 +95,13 @@ func (repo *PostgresNoteRepository) FindAll(ctx context.Context) ([]*entities.No
 }
 
 func (repo *PostgresNoteRepository) FindByJournalID(ctx context.Context, journalID uuid.UUID) ([]*entities.Note, error) {
+	// Excluding note's content (body) because this won't be a detailed view of the note
 	query := `
     SELECT 
         id,
         journal_id,
         author,
         title,
-        body,
         last_viewed,
         updated_at,
         created_at
@@ -129,7 +124,6 @@ func (repo *PostgresNoteRepository) FindByJournalID(ctx context.Context, journal
 			&note.JournalID,
 			&note.Author,
 			&note.Title,
-			&note.Body,
 			&note.LastViewed,
 			&note.UpdatedAt,
 			&note.CreatedAt,

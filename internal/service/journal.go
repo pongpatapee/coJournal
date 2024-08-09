@@ -37,7 +37,18 @@ func (s *journalService) FindAll(ctx context.Context) ([]*entities.Journal, erro
 }
 
 func (s *journalService) FindByID(ctx context.Context, id uuid.UUID) (*entities.Journal, error) {
-	return s.journalRepo.FindByID(ctx, id)
+	journal, err := s.journalRepo.FindByID(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+
+	notes, err := s.noteRepo.FindByJournalID(ctx, id)
+	journal.Notes = notes
+	if err != nil {
+		return nil, err
+	}
+
+	return journal, nil
 }
 
 func (s *journalService) Update(ctx context.Context, journal *entities.Journal) error {

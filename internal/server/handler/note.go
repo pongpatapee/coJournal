@@ -45,9 +45,24 @@ func (h *NoteHTTPHandler) CreateNote(c echo.Context) error {
 }
 
 func (h *NoteHTTPHandler) GetAllNote(c echo.Context) error {
-	notes, err := h.noteService.FindAll(c.Request().Context())
-	if err != nil {
-		return err
+	var notes []*entities.Note
+	var err error
+
+	if c.QueryParam("journal_id") == "" {
+		notes, err = h.noteService.FindAll(c.Request().Context())
+		if err != nil {
+			return err
+		}
+	} else {
+		journalID, err := uuid.Parse(c.QueryParam("journal_id"))
+		if err != nil {
+			return err
+		}
+
+		notes, err = h.noteService.FindByJournalID(c.Request().Context(), journalID)
+		if err != nil {
+			return err
+		}
 	}
 
 	return c.JSON(http.StatusOK, notes)

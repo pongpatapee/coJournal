@@ -26,6 +26,7 @@ type JournalService interface {
 type NoteService interface {
 	Create(ctx context.Context, note *entities.Note) error
 	FindAll(ctx context.Context) ([]*entities.Note, error)
+	FindByJournalID(ctx context.Context, journalID uuid.UUID) ([]*entities.Note, error)
 	FindByID(ctx context.Context, id uuid.UUID) (*entities.Note, error)
 	Update(ctx context.Context, note *entities.Note) error
 	Delete(ctx context.Context, id uuid.UUID) error
